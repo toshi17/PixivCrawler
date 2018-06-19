@@ -26,19 +26,21 @@ separator = '------------------------------------------------------------'
 
 total_works = json_result.pagination.total
 total_pages = json_result.pagination.pages
+per_page_works = json_result.pagination.per_page
 for page_no in range(1, total_pages):
-    json_result = api.search_works("デフォルメ", page=page_no, mode='text')
-    
-    per_page_works = json_result.pagination.per_page
-    for work_no in range(0, per_page_works):
-        illust = json_result.response[work_no]
-        print('Procedure: %d/%d' % (work_no + 1 + (page_no - 1) * 30, total_works))
-        print('Title: %s' % illust.title)
+    try:
+        json_result = api.search_works("デフォルメ", page=page_no, mode='text')
+        
+        print('page: %d' % page_no)
         print(separator)
-        aapi.download(illust.image_urls.large, saving_directory_path)
-        sleep(1)
+        for work_no in range(0, per_page_works):
+            illust = json_result.response[work_no]
+            print('Procedure: %d/%d' % (work_no + 1 + (page_no - 1) * 30, total_works))
+            print('Title: %s' % illust.title)
+            print(separator)
+            aapi.download(illust.image_urls.large, saving_directory_path)
+            sleep(1)
+    except:
+        continue
 
 print('\nThat\'s all.')
-
-
-
